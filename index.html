@@ -74,7 +74,7 @@
                     <input type="text" id="userName" name="name" required placeholder="例：宮崎 太郎" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold outline-none focus:border-red-500 transition-all shadow-sm">
                 </div>
 
-                <!-- 資格選択 -->
+                <!-- 資格選択 (修正済み) -->
                 <div class="space-y-3">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold italic"><i data-lucide="award" size="14"></i> 保有資格（複数選択可）</label>
                     <div class="grid grid-cols-2 gap-3">
@@ -160,14 +160,13 @@
         lucide.createIcons();
 
         // ----------------------------------------------------------------
-        // ⚠️ 設定
+        // ⚠️ 設定 (あなたの情報を維持しています)
         // ----------------------------------------------------------------
         const GAS_URL = "https://script.google.com/macros/s/AKfycbyt1KFRe9tI8ct-8CfejmK0O7_H6c5GJ_fyvUw76EIyc0brw9sDae4ZqTra3wARUhqa/exec"; 
         const LIFF_ID = "2009148855-m34uybiM";
         // ----------------------------------------------------------------
 
         async function initLiff() {
-            // LIFF IDが正しく設定されているかチェック
             if (!LIFF_ID || LIFF_ID.includes("ここに")) return;
 
             try {
@@ -177,12 +176,8 @@
                     const profile = await liff.getProfile();
                     document.getElementById('userName').value = profile.displayName;
                 } else {
-                    // 外部ブラウザ（Canvasプレビュー含む）での無限リダイレクトを防ぐため
-                    // LINEアプリ内（isInClient）の場合のみ自動でログインを実行する
                     if (liff.isInClient()) {
                         liff.login();
-                    } else {
-                        console.log("LINE外部ブラウザで実行中。プレビューのためログインをスキップします。");
                     }
                 }
             } catch (err) {
@@ -205,9 +200,7 @@
                 if (liff.isLoggedIn()) {
                     profile = await liff.getProfile();
                 }
-            } catch (pErr) {
-                console.warn("Profile fetch failed:", pErr);
-            }
+            } catch (pErr) {}
 
             const payload = {
                 name: formData.get('name'),
@@ -219,7 +212,6 @@
             };
 
             try {
-                // GASへの送信
                 await fetch(GAS_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -228,10 +220,8 @@
                     body: JSON.stringify(payload)
                 });
 
-                // 通信終了後、ローディングを消す
                 loader.style.display = 'none';
 
-                // LINEトークルームへメッセージ送信 (失敗しても次に進む)
                 try {
                     if (liff.isInClient()) {
                         await liff.sendMessages([{ 
@@ -241,7 +231,6 @@
                     }
                 } catch (mErr) { console.warn("Message send failed:", mErr); }
 
-                // 完了画面を表示
                 successOverlay.style.display = 'flex';
 
             } catch (err) {
@@ -251,7 +240,7 @@
             }
         });
 
-        initLiff();
-    </script>
-</body>
-</html>
+            initLiff();
+        </script>
+    </body>
+    </html>
