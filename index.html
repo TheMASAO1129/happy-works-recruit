@@ -11,6 +11,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
         .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(255, 255, 255, 0.9); z-index: 100; align-items: center; justify-content: center; }
+        .success-overlay { display: none; position: fixed; inset: 0; background: #fff; z-index: 110; align-items: center; justify-content: center; text-align: center; }
         input[type="checkbox"]:checked + span { color: #ef4444; }
     </style>
 </head>
@@ -20,7 +21,23 @@
     <div id="loading" class="loading-overlay">
         <div class="flex flex-col items-center gap-4 text-center">
             <div class="animate-spin text-red-500 text-4xl"><i data-lucide="loader-2"></i></div>
-            <p id="loadingText" class="font-bold text-slate-500 italic">エントリー内容を送信中...<br><span class="text-[10px] font-normal not-italic">※そのままお待ちください</span></p>
+            <p class="font-bold text-slate-500 italic">エントリー内容を送信中...<br><span class="text-[10px] font-normal not-italic">※そのままお待ちください</span></p>
+        </div>
+    </div>
+
+    <!-- 送信完了画面 (alertの代わり) -->
+    <div id="success" class="success-overlay p-10">
+        <div class="flex flex-col items-center gap-6">
+            <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center shadow-lg">
+                <i data-lucide="check" size="40"></i>
+            </div>
+            <div>
+                <h2 class="text-2xl font-black italic mb-2">送信が完了しました！</h2>
+                <p class="text-sm text-slate-500 font-bold leading-relaxed">エントリーありがとうございます。<br>内容を確認し、担当者よりご連絡いたします。</p>
+            </div>
+            <button onclick="liff.closeWindow()" class="mt-4 bg-slate-900 text-white px-8 py-3 rounded-full font-bold text-sm transition-transform active:scale-95">
+                閉じる
+            </button>
         </div>
     </div>
 
@@ -84,7 +101,7 @@
         lucide.createIcons();
 
         // ----------------------------------------------------------------
-        // ⚠️ 設定：最新のID/URLに書き換えてください
+        // ⚠️ 設定
         // ----------------------------------------------------------------
         const GAS_URL = "https://script.google.com/macros/s/AKfycbyt1KFRe9tI8ct-8CfejmK0O7_H6c5GJ_fyvUw76EIyc0brw9sDae4ZqTra3wARUhqa/exec"; 
         const LIFF_ID = "2009148855-m34uybiM";
@@ -108,12 +125,9 @@
         document.getElementById('entryForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            if (!GAS_URL || GAS_URL.includes("ここに")) {
-                alert("システム設定（GASのURL）が完了していません。");
-                return;
-            }
-
             const loader = document.getElementById('loading');
+            const successOverlay = document.getElementById('success');
+            
             loader.style.display = 'flex';
 
             const formData = new FormData(e.target);
@@ -137,11 +151,8 @@
                 userId: profile.userId
             };
 
-            console.log("Sending data to GAS:", payload);
-
             try {
                 // GASへの送信
-                // mode: 'no-cors' は応答の詳細を受け取れませんが、送信自体は成功します
                 await fetch(GAS_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -150,9 +161,10 @@
                     body: JSON.stringify(payload)
                 });
 
-                console.log("Data sent successfully (assumed via no-cors)");
+                // 通信が終わったら即座にローディングを消す
+                loader.style.display = 'none';
 
-                // メッセージ送信（失敗しても送信自体は完了しているので続行させる）
+                // トークルームへのメッセージ送信 (失敗しても次に進む)
                 try {
                     if (liff.isInClient()) {
                         await liff.sendMessages([{ 
@@ -161,19 +173,16 @@
                         }]);
                     }
                 } catch (msgErr) {
-                    console.warn("Failed to send LINE message in chat:", msgErr);
+                    console.warn("LINEメッセージ送信失敗:", msgErr);
                 }
 
-                // 送信完了後の処理
-                alert("エントリーを送信しました。ありがとうございました！");
-                liff.closeWindow();
+                // 完了画面を表示
+                successOverlay.style.display = 'flex';
 
             } catch (err) {
                 console.error("Critical submission error:", err);
-                alert("送信中にエラーが発生しました。インターネット接続を確認してください。");
-            } finally {
-                // 成功・失敗に関わらず必ずローディングを非表示にする
                 loader.style.display = 'none';
+                alert("送信中にエラーが発生しました。接続を確認してください。");
             }
         });
 
