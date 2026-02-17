@@ -9,42 +9,44 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* ローディング・完了画面のスタイル */
         .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(255, 255, 255, 0.9); z-index: 100; align-items: center; justify-content: center; }
         .success-overlay { display: none; position: fixed; inset: 0; background: #fff; z-index: 110; align-items: center; justify-content: center; text-align: center; }
         
-        /* チェックボックスのカスタムスタイル */
-        .check-card input:checked + span {
+        /* チェックボックスのカードスタイル */
+        .check-card input:checked + .card-content {
+            border-color: #ef4444;
+            background-color: #fef2f2;
             color: #ef4444;
         }
-        .check-card input:checked ~ .check-icon {
+        .check-card input:checked + .card-content .check-mark {
             opacity: 1;
+            transform: scale(1);
         }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
 
-    <!-- ローディング画面 -->
+    <!-- ローディング -->
     <div id="loading" class="loading-overlay">
         <div class="flex flex-col items-center gap-4 text-center p-6">
             <div class="animate-spin text-red-500 text-4xl"><i data-lucide="loader-2"></i></div>
-            <p class="font-bold text-slate-500 italic">エントリー内容を送信中...<br><span class="text-[10px] font-normal not-italic">※そのままお待ちください</span></p>
+            <p class="font-bold text-slate-500 italic text-center">送信中...</p>
         </div>
     </div>
 
-    <!-- 送信完了画面 -->
+    <!-- 送信完了 -->
     <div id="success" class="success-overlay p-10">
         <div class="flex flex-col items-center gap-6">
             <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center shadow-lg">
                 <i data-lucide="check" size="40"></i>
             </div>
             <div>
-                <h2 class="text-2xl font-black italic mb-2 tracking-tighter">SUCCESS!</h2>
+                <h2 class="text-2xl font-black italic mb-2 tracking-tighter uppercase">Success!</h2>
                 <p class="text-sm text-slate-500 font-bold leading-relaxed tracking-tight">エントリーが完了しました。<br>内容を確認し、担当者よりご連絡いたします。</p>
             </div>
-            <button onclick="liff.closeWindow()" class="mt-4 bg-slate-900 text-white px-10 py-3 rounded-full font-bold text-sm transition-transform active:scale-95 shadow-xl">
+            <button onclick="liff.closeWindow()" class="mt-4 bg-slate-900 text-white px-10 py-3 rounded-full font-bold text-sm shadow-xl transition-transform active:scale-95">
                 閉じる
             </button>
         </div>
@@ -58,7 +60,7 @@
                 <div class="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center mb-4 border border-white/30">
                     <i data-lucide="clipboard-check" size="32"></i>
                 </div>
-                <h1 class="text-3xl font-black italic tracking-tighter leading-none uppercase">Happy Works<br/>Entry Form</h1>
+                <h1 class="text-3xl font-black italic tracking-tighter leading-none uppercase tracking-tight">Happy Works<br/>Entry Form</h1>
                 <p class="text-[10px] font-bold mt-3 opacity-90 uppercase tracking-[0.2em]">その出会いが“きっかけ”になる</p>
             </div>
         </div>
@@ -69,36 +71,54 @@
                 <!-- お名前 -->
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold italic"><i data-lucide="user" size="14"></i> お名前</label>
-                    <input type="text" id="userName" name="name" required placeholder="例：宮崎 太郎" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold outline-none focus:border-red-500 transition-all">
+                    <input type="text" id="userName" name="name" required placeholder="例：宮崎 太郎" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold outline-none focus:border-red-500 transition-all shadow-sm">
                 </div>
 
-                <!-- 資格選択（ここを修正しました） -->
-                <div class="space-y-2">
+                <!-- 資格選択 -->
+                <div class="space-y-3">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold italic"><i data-lucide="award" size="14"></i> 保有資格（複数選択可）</label>
-                    <div class="grid grid-cols-2 gap-2" id="qualificationGroup">
-                        <label class="check-card relative flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
-                            <input type="checkbox" name="qualifications" value="保育士" class="w-4 h-4 accent-red-500">
-                            <span>保育士</span>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="check-card relative cursor-pointer">
+                            <input type="checkbox" name="qualifications" value="保育士" class="hidden">
+                            <div class="card-content flex items-center justify-between p-4 bg-slate-50 rounded-2xl border-2 border-slate-100 transition-all">
+                                <span class="text-[11px] font-black italic">保育士</span>
+                                <i data-lucide="check-circle-2" size="14" class="check-mark opacity-0 transition-all scale-50 text-red-500"></i>
+                            </div>
                         </label>
-                        <label class="check-card relative flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
-                            <input type="checkbox" name="qualifications" value="児童指導員" class="w-4 h-4 accent-red-500">
-                            <span>児童指導員</span>
+                        <label class="check-card relative cursor-pointer">
+                            <input type="checkbox" name="qualifications" value="児童指導員" class="hidden">
+                            <div class="card-content flex items-center justify-between p-4 bg-slate-50 rounded-2xl border-2 border-slate-100 transition-all">
+                                <span class="text-[11px] font-black italic">児童指導員</span>
+                                <i data-lucide="check-circle-2" size="14" class="check-mark opacity-0 transition-all scale-50 text-red-500"></i>
+                            </div>
                         </label>
-                        <label class="check-card relative flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
-                            <input type="checkbox" name="qualifications" value="介護福祉士" class="w-4 h-4 accent-red-500">
-                            <span>介護福祉士</span>
+                        <label class="check-card relative cursor-pointer">
+                            <input type="checkbox" name="qualifications" value="介護福祉士" class="hidden">
+                            <div class="card-content flex items-center justify-between p-4 bg-slate-50 rounded-2xl border-2 border-slate-100 transition-all">
+                                <span class="text-[11px] font-black italic">介護福祉士</span>
+                                <i data-lucide="check-circle-2" size="14" class="check-mark opacity-0 transition-all scale-50 text-red-500"></i>
+                            </div>
                         </label>
-                        <label class="check-card relative flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
-                            <input type="checkbox" name="qualifications" value="教員免許" class="w-4 h-4 accent-red-500">
-                            <span>教員免許</span>
+                        <label class="check-card relative cursor-pointer">
+                            <input type="checkbox" name="qualifications" value="教員免許" class="hidden">
+                            <div class="card-content flex items-center justify-between p-4 bg-slate-50 rounded-2xl border-2 border-slate-100 transition-all">
+                                <span class="text-[11px] font-black italic">教員免許</span>
+                                <i data-lucide="check-circle-2" size="14" class="check-mark opacity-0 transition-all scale-50 text-red-500"></i>
+                            </div>
                         </label>
-                        <label class="check-card relative flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
-                            <input type="checkbox" name="qualifications" value="社会福祉士" class="w-4 h-4 accent-red-500">
-                            <span>社会福祉士</span>
+                        <label class="check-card relative cursor-pointer">
+                            <input type="checkbox" name="qualifications" value="社会福祉士" class="hidden">
+                            <div class="card-content flex items-center justify-between p-4 bg-slate-50 rounded-2xl border-2 border-slate-100 transition-all">
+                                <span class="text-[11px] font-black italic">社会福祉士</span>
+                                <i data-lucide="check-circle-2" size="14" class="check-mark opacity-0 transition-all scale-50 text-red-500"></i>
+                            </div>
                         </label>
-                        <label class="check-card relative flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
-                            <input type="checkbox" name="qualifications" value="その他" class="w-4 h-4 accent-red-500">
-                            <span>その他</span>
+                        <label class="check-card relative cursor-pointer">
+                            <input type="checkbox" name="qualifications" value="その他" class="hidden">
+                            <div class="card-content flex items-center justify-between p-4 bg-slate-50 rounded-2xl border-2 border-slate-100 transition-all">
+                                <span class="text-[11px] font-black italic">その他</span>
+                                <i data-lucide="check-circle-2" size="14" class="check-mark opacity-0 transition-all scale-50 text-red-500"></i>
+                            </div>
                         </label>
                     </div>
                 </div>
@@ -106,17 +126,22 @@
                 <!-- 希望内容 -->
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold italic"><i data-lucide="search" size="14"></i> ご希望の内容</label>
-                    <select name="type" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold outline-none appearance-none focus:border-red-500">
-                        <option>まずは施設見学をしたい</option>
-                        <option>求人について詳しく聞きたい</option>
-                        <option>面接を希望する</option>
-                    </select>
+                    <div class="relative">
+                        <select name="type" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold outline-none appearance-none focus:border-red-500 shadow-sm">
+                            <option>まずは施設見学をしたい</option>
+                            <option>求人について詳しく聞きたい</option>
+                            <option>面接を希望する</option>
+                        </select>
+                        <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <i data-lucide="chevron-down" size="18"></i>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- メッセージ -->
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold italic"><i data-lucide="message-circle" size="14"></i> 採用担当へのメッセージ</label>
-                    <textarea name="message" rows="4" placeholder="自由にご記入ください！" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold outline-none focus:border-red-500"></textarea>
+                    <textarea name="message" rows="4" placeholder="自由にご記入ください！" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold outline-none focus:border-red-500 shadow-sm"></textarea>
                 </div>
 
                 <!-- 送信ボタン -->
@@ -126,8 +151,8 @@
             </form>
         </div>
 
-        <footer class="p-10 text-center border-t border-slate-50 bg-slate-50/50">
-            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest italic leading-loose">© 2026 HAPPY WORKS RECRUITMENT<br>DESIGNED FOR VIVID ENCOUNTERS</p>
+        <footer class="p-10 text-center border-t border-slate-100 bg-slate-50/50">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest italic leading-loose">© 2026 HAPPY WORKS RECRUITMENT</p>
         </footer>
     </div>
 
@@ -135,21 +160,30 @@
         lucide.createIcons();
 
         // ----------------------------------------------------------------
-        // ⚠️ 設定：実際のURLとIDに置き換えてください
+        // ⚠️ 設定
         // ----------------------------------------------------------------
         const GAS_URL = "https://script.google.com/macros/s/AKfycbyt1KFRe9tI8ct-8CfejmK0O7_H6c5GJ_fyvUw76EIyc0brw9sDae4ZqTra3wARUhqa/exec"; 
         const LIFF_ID = "2009148855-m34uybiM";
         // ----------------------------------------------------------------
 
         async function initLiff() {
+            // LIFF IDが正しく設定されているかチェック
             if (!LIFF_ID || LIFF_ID.includes("ここに")) return;
+
             try {
                 await liff.init({ liffId: LIFF_ID });
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                } else {
+                
+                if (liff.isLoggedIn()) {
                     const profile = await liff.getProfile();
                     document.getElementById('userName').value = profile.displayName;
+                } else {
+                    // 外部ブラウザ（Canvasプレビュー含む）での無限リダイレクトを防ぐため
+                    // LINEアプリ内（isInClient）の場合のみ自動でログインを実行する
+                    if (liff.isInClient()) {
+                        liff.login();
+                    } else {
+                        console.log("LINE外部ブラウザで実行中。プレビューのためログインをスキップします。");
+                    }
                 }
             } catch (err) {
                 console.error("LIFF Init Error:", err);
@@ -167,7 +201,13 @@
             const qualifications = Array.from(document.querySelectorAll('input[name="qualifications"]:checked')).map(el => el.value);
             
             let profile = { displayName: "不明", userId: "不明" };
-            try { if (liff.isLoggedIn()) profile = await liff.getProfile(); } catch (pErr) {}
+            try { 
+                if (liff.isLoggedIn()) {
+                    profile = await liff.getProfile();
+                }
+            } catch (pErr) {
+                console.warn("Profile fetch failed:", pErr);
+            }
 
             const payload = {
                 name: formData.get('name'),
@@ -188,7 +228,10 @@
                     body: JSON.stringify(payload)
                 });
 
-                // トークルームへのメッセージ送信 (成功・失敗問わず進める)
+                // 通信終了後、ローディングを消す
+                loader.style.display = 'none';
+
+                // LINEトークルームへメッセージ送信 (失敗しても次に進む)
                 try {
                     if (liff.isInClient()) {
                         await liff.sendMessages([{ 
@@ -196,16 +239,15 @@
                             text: 'エントリーを受け付けました！担当者からの連絡をお待ちください。' 
                         }]);
                     }
-                } catch (mErr) { console.warn("Message failed:", mErr); }
+                } catch (mErr) { console.warn("Message send failed:", mErr); }
 
-                // 通信終了後、ローディングを消して完了画面を表示
-                loader.style.display = 'none';
+                // 完了画面を表示
                 successOverlay.style.display = 'flex';
 
             } catch (err) {
-                console.error("Submission Error:", err);
+                console.error("Submit error", err);
                 loader.style.display = 'none';
-                alert("送信中にエラーが発生しました。接続を確認してください。");
+                alert("送信に失敗しました。接続を確認してください。");
             }
         });
 
