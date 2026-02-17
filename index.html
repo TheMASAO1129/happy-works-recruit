@@ -10,41 +10,23 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
-        
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.9);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* カスタムチェックボックスのスタイル */
-        input[type="checkbox"]:checked + span {
-            color: #ef4444;
-        }
+        .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(255, 255, 255, 0.9); z-index: 100; align-items: center; justify-content: center; }
+        input[type="checkbox"]:checked + span { color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
 
-    <!-- 送信中のローディング画面 -->
+    <!-- ローディング画面 -->
     <div id="loading" class="loading-overlay">
-        <div class="flex flex-col items-center gap-4">
-            <div class="animate-spin text-red-500 text-4xl">
-                <i data-lucide="loader-2"></i>
-            </div>
-            <p class="font-bold text-slate-500 italic text-center">エントリー内容を送信中...<br><span class="text-[10px] font-normal not-italic">※閉じないでお待ちください</span></p>
+        <div class="flex flex-col items-center gap-4 text-center">
+            <div class="animate-spin text-red-500 text-4xl"><i data-lucide="loader-2"></i></div>
+            <p id="loadingText" class="font-bold text-slate-500 italic">エントリー内容を送信中...<br><span class="text-[10px] font-normal not-italic">※そのままお待ちください</span></p>
         </div>
     </div>
 
     <div class="max-w-md mx-auto min-h-screen bg-white flex flex-col shadow-2xl">
-        <!-- ヘッダーデザイン -->
         <div class="bg-red-500 p-10 text-white rounded-b-[50px] shadow-2xl relative overflow-hidden">
-            <div class="absolute top-0 right-0 p-4 opacity-10 rotate-12">
-                <i data-lucide="sparkles" size="140"></i>
-            </div>
+            <div class="absolute top-0 right-0 p-4 opacity-10 rotate-12"><i data-lucide="sparkles" size="140"></i></div>
             <div class="relative z-10">
                 <div class="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center mb-4 border border-white/30">
                     <i data-lucide="clipboard-check" size="32"></i>
@@ -54,77 +36,41 @@
             </div>
         </div>
 
-        <!-- フォーム本体 -->
         <div class="px-8 py-10 flex-1">
             <form id="entryForm" class="space-y-8">
-                <!-- 名前入力（LINE名が初期値として入ります） -->
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold">
-                        <i data-lucide="user" size="14"></i> お名前
-                    </label>
-                    <input type="text" id="userName" name="name" required placeholder="例：宮崎 太郎" 
-                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-4 focus:ring-red-500/10 focus:border-red-500 outline-none transition-all">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold"><i data-lucide="user" size="14"></i> お名前</label>
+                    <input type="text" id="userName" name="name" required placeholder="例：宮崎 太郎" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold outline-none focus:border-red-500 transition-all">
                 </div>
 
-                <!-- 資格選択 -->
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold">
-                        <i data-lucide="award" size="14"></i> 保有資格（複数選択可）
-                    </label>
-                    <div class="grid grid-cols-2 gap-2" id="qualificationGroup">
-                        <label class="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
-                            <input type="checkbox" name="qualifications" value="保育士" class="w-4 h-4 accent-red-500">
-                            <span>保育士</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
-                            <input type="checkbox" name="qualifications" value="児童指導員" class="w-4 h-4 accent-red-500">
-                            <span>児童指導員</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
-                            <input type="checkbox" name="qualifications" value="介護福祉士" class="w-4 h-4 accent-red-500">
-                            <span>介護福祉士</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
-                            <input type="checkbox" name="qualifications" value="教員免許" class="w-4 h-4 accent-red-500">
-                            <span>教員免許</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
-                            <input type="checkbox" name="qualifications" value="社会福祉士" class="w-4 h-4 accent-red-500">
-                            <span>社会福祉士</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
-                            <input type="checkbox" name="qualifications" value="その他" class="w-4 h-4 accent-red-500">
-                            <span>その他</span>
-                        </label>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold"><i data-lucide="award" size="14"></i> 保有資格（複数選択可）</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        {['保育士', '児童指導員', '介護福祉士', '教員免許', '社会福祉士', 'その他'].map(q => `
+                            <label class="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
+                                <input type="checkbox" name="qualifications" value="${q}" class="w-4 h-4 accent-red-500">
+                                <span>${q}</span>
+                            </label>
+                        `).join('')}
                     </div>
                 </div>
 
-                <!-- 希望内容選択 -->
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold">
-                        <i data-lucide="search" size="14"></i> ご希望の内容
-                    </label>
-                    <select name="type" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-4 focus:ring-red-500/10 focus:border-red-500 outline-none appearance-none">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold"><i data-lucide="search" size="14"></i> ご希望の内容</label>
+                    <select name="type" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold outline-none appearance-none">
                         <option>まずは施設見学をしたい</option>
                         <option>求人について詳しく聞きたい</option>
                         <option>面接を希望する</option>
                     </select>
                 </div>
 
-                <!-- メッセージ自由入力 -->
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold">
-                        <i data-lucide="message-circle" size="14"></i> メッセージ
-                    </label>
-                    <textarea name="message" rows="4" placeholder="あなたの得意なことや想い、不安なことなど自由にお伝えください！"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-4 focus:ring-red-500/10 focus:border-red-500 outline-none"></textarea>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold"><i data-lucide="message-circle" size="14"></i> 採用担当へのメッセージ</label>
+                    <textarea name="message" rows="4" placeholder="自由にご記入ください！" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold outline-none"></textarea>
                 </div>
 
-                <!-- 送信ボタン -->
-                <button type="submit" 
-                    class="w-full bg-red-500 text-white py-6 rounded-[2.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-red-200 flex items-center justify-center gap-3 active:scale-95 transition-all">
-                    エントリーを送信
-                    <i data-lucide="arrow-right" size="20"></i>
+                <button type="submit" id="submitBtn" class="w-full bg-red-500 text-white py-6 rounded-[2.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-red-200 flex items-center justify-center gap-3 active:scale-95 transition-all">
+                    エントリーを送信 <i data-lucide="arrow-right" size="20"></i>
                 </button>
             </form>
         </div>
@@ -137,21 +83,15 @@
     <script>
         lucide.createIcons();
 
-        /** * ⚠️ 設定の注意点（2024年9月以降の新仕様対応）：
-         * LIFFアプリは「Messaging API」チャネルには追加できなくなりました。
-         * 1. LINE Developersで「LINEログイン」チャネルを新規作成してください。
-         * 2. その「LINEログイン」チャネルの中にLIFFアプリを追加してください。
-         * 3. 発行されたLIFF IDを以下の変数に設定してください。
-         */
+        // ----------------------------------------------------------------
+        // ⚠️ 設定：最新のID/URLに書き換えてください
+        // ----------------------------------------------------------------
         const GAS_URL = "https://script.google.com/macros/s/AKfycbyt1KFRe9tI8ct-8CfejmK0O7_H6c5GJ_fyvUw76EIyc0brw9sDae4ZqTra3wARUhqa/exec"; 
-        const LIFF_ID = "https://liff.line.me/2009148855-m34uybiM";
+        const LIFF_ID = "2009148855-m34uybiM";
+        // ----------------------------------------------------------------
 
         async function initLiff() {
-            if (!LIFF_ID || LIFF_ID.includes("ここに")) {
-                console.error("LIFF IDが設定されていません。LINEログインチャネルから取得してください。");
-                return;
-            }
-
+            if (!LIFF_ID || LIFF_ID.includes("ここに")) return;
             try {
                 await liff.init({ liffId: LIFF_ID });
                 if (!liff.isLoggedIn()) {
@@ -161,10 +101,7 @@
                     document.getElementById('userName').value = profile.displayName;
                 }
             } catch (err) {
-                console.error("LIFFの初期化に失敗しました", err);
-                if (err.message.includes("channel not found")) {
-                    alert("LIFF IDが無効、またはチャネルの設定が正しくありません。LINEログインチャネルを確認してください。");
-                }
+                console.error("LIFF Init Error:", err);
             }
         }
 
@@ -172,22 +109,23 @@
             e.preventDefault();
             
             if (!GAS_URL || GAS_URL.includes("ここに")) {
-                alert("GASのURLが設定されていません。");
+                alert("システム設定（GASのURL）が完了していません。");
                 return;
             }
 
-            document.getElementById('loading').style.display = 'flex';
+            const loader = document.getElementById('loading');
+            loader.style.display = 'flex';
 
             const formData = new FormData(e.target);
             const qualifications = Array.from(document.querySelectorAll('input[name="qualifications"]:checked')).map(el => el.value);
             
             let profile = { displayName: "不明", userId: "不明" };
-            try {
+            try { 
                 if (liff.isLoggedIn()) {
                     profile = await liff.getProfile();
                 }
             } catch (pErr) {
-                console.warn("プロフィール取得失敗");
+                console.warn("Profile fetch failed:", pErr);
             }
 
             const payload = {
@@ -199,32 +137,43 @@
                 userId: profile.userId
             };
 
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000);
+            console.log("Sending data to GAS:", payload);
 
+            try {
+                // GASへの送信
+                // mode: 'no-cors' は応答の詳細を受け取れませんが、送信自体は成功します
                 await fetch(GAS_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    body: JSON.stringify(payload),
-                    signal: controller.signal
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
 
-                clearTimeout(timeoutId);
+                console.log("Data sent successfully (assumed via no-cors)");
 
-                if (liff.isInClient()) {
-                    await liff.sendMessages([{
-                        type: 'text',
-                        text: 'エントリーを受け付けました！担当者からの連絡をお待ちください。'
-                    }]);
+                // メッセージ送信（失敗しても送信自体は完了しているので続行させる）
+                try {
+                    if (liff.isInClient()) {
+                        await liff.sendMessages([{ 
+                            type: 'text', 
+                            text: 'エントリーを受け付けました！担当者からの連絡をお待ちください。' 
+                        }]);
+                    }
+                } catch (msgErr) {
+                    console.warn("Failed to send LINE message in chat:", msgErr);
                 }
 
+                // 送信完了後の処理
+                alert("エントリーを送信しました。ありがとうございました！");
                 liff.closeWindow();
 
             } catch (err) {
-                console.error("送信エラー", err);
-                alert("送信に失敗しました。GASのデプロイ設定（アクセスできるユーザー：全員）を確認してください。");
-                document.getElementById('loading').style.display = 'none';
+                console.error("Critical submission error:", err);
+                alert("送信中にエラーが発生しました。インターネット接続を確認してください。");
+            } finally {
+                // 成功・失敗に関わらず必ずローディングを非表示にする
+                loader.style.display = 'none';
             }
         });
 
