@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Works エントリー</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+        
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* カスタムチェックボックスのスタイル */
+        input[type="checkbox"]:checked + span {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <!-- 送信中のローディング画面 -->
+    <div id="loading" class="loading-overlay">
+        <div class="flex flex-col items-center gap-4">
+            <div class="animate-spin text-red-500 text-4xl">
+                <i data-lucide="loader-2"></i>
+            </div>
+            <p class="font-bold text-slate-500 italic text-center">エントリー内容を送信中...<br><span class="text-[10px] font-normal not-italic">※閉じないでお待ちください</span></p>
+        </div>
+    </div>
+
+    <div class="max-w-md mx-auto min-h-screen bg-white flex flex-col shadow-2xl">
+        <!-- ヘッダーデザイン -->
+        <div class="bg-red-500 p-10 text-white rounded-b-[50px] shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-4 opacity-10 rotate-12">
+                <i data-lucide="sparkles" size="140"></i>
+            </div>
+            <div class="relative z-10">
+                <div class="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center mb-4 border border-white/30">
+                    <i data-lucide="clipboard-check" size="32"></i>
+                </div>
+                <h1 class="text-3xl font-black italic tracking-tighter leading-none uppercase">Happy Works<br/>Entry Form</h1>
+                <p class="text-[10px] font-bold mt-3 opacity-90 uppercase tracking-[0.2em]">その出会いが“きっかけ”になる</p>
+            </div>
+        </div>
+
+        <!-- フォーム本体 -->
+        <div class="px-8 py-10 flex-1">
+            <form id="entryForm" class="space-y-8">
+                <!-- 名前入力（LINE名が初期値として入ります） -->
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold">
+                        <i data-lucide="user" size="14"></i> お名前
+                    </label>
+                    <input type="text" id="userName" name="name" required placeholder="例：宮崎 太郎" 
+                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-4 focus:ring-red-500/10 focus:border-red-500 outline-none transition-all">
+                </div>
+
+                <!-- 資格選択 -->
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold">
+                        <i data-lucide="award" size="14"></i> 保有資格（複数選択可）
+                    </label>
+                    <div class="grid grid-cols-2 gap-2" id="qualificationGroup">
+                        <label class="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
+                            <input type="checkbox" name="qualifications" value="保育士" class="w-4 h-4 accent-red-500">
+                            <span>保育士</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
+                            <input type="checkbox" name="qualifications" value="児童指導員" class="w-4 h-4 accent-red-500">
+                            <span>児童指導員</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
+                            <input type="checkbox" name="qualifications" value="介護福祉士" class="w-4 h-4 accent-red-500">
+                            <span>介護福祉士</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
+                            <input type="checkbox" name="qualifications" value="教員免許" class="w-4 h-4 accent-red-500">
+                            <span>教員免許</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
+                            <input type="checkbox" name="qualifications" value="社会福祉士" class="w-4 h-4 accent-red-500">
+                            <span>社会福祉士</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-bold cursor-pointer hover:bg-white active:bg-slate-100 transition-all">
+                            <input type="checkbox" name="qualifications" value="その他" class="w-4 h-4 accent-red-500">
+                            <span>その他</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 希望内容選択 -->
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold">
+                        <i data-lucide="search" size="14"></i> ご希望の内容
+                    </label>
+                    <select name="type" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-4 focus:ring-red-500/10 focus:border-red-500 outline-none appearance-none">
+                        <option>まずは施設見学をしたい</option>
+                        <option>求人について詳しく聞きたい</option>
+                        <option>面接を希望する</option>
+                    </select>
+                </div>
+
+                <!-- メッセージ自由入力 -->
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold">
+                        <i data-lucide="message-circle" size="14"></i> メッセージ
+                    </label>
+                    <textarea name="message" rows="4" placeholder="あなたの得意なことや想い、不安なことなど自由にお伝えください！"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-4 focus:ring-red-500/10 focus:border-red-500 outline-none"></textarea>
+                </div>
+
+                <!-- 送信ボタン -->
+                <button type="submit" 
+                    class="w-full bg-red-500 text-white py-6 rounded-[2.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-red-200 flex items-center justify-center gap-3 active:scale-95 transition-all">
+                    エントリーを送信
+                    <i data-lucide="arrow-right" size="20"></i>
+                </button>
+            </form>
+        </div>
+
+        <footer class="p-10 text-center border-t border-slate-50">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest italic">© 2026 HAPPY WORKS RECRUITMENT</p>
+        </footer>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        /** * ⚠️ 設定の注意点（2024年9月以降の新仕様対応）：
+         * LIFFアプリは「Messaging API」チャネルには追加できなくなりました。
+         * 1. LINE Developersで「LINEログイン」チャネルを新規作成してください。
+         * 2. その「LINEログイン」チャネルの中にLIFFアプリを追加してください。
+         * 3. 発行されたLIFF IDを以下の変数に設定してください。
+         */
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbyt1KFRe9tI8ct-8CfejmK0O7_H6c5GJ_fyvUw76EIyc0brw9sDae4ZqTra3wARUhqa/exec"; 
+        const LIFF_ID = "ここにLINEログインチャネルで発行したLIFF IDを貼る";
+
+        async function initLiff() {
+            if (!LIFF_ID || LIFF_ID.includes("ここに")) {
+                console.error("LIFF IDが設定されていません。LINEログインチャネルから取得してください。");
+                return;
+            }
+
+            try {
+                await liff.init({ liffId: LIFF_ID });
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                } else {
+                    const profile = await liff.getProfile();
+                    document.getElementById('userName').value = profile.displayName;
+                }
+            } catch (err) {
+                console.error("LIFFの初期化に失敗しました", err);
+                if (err.message.includes("channel not found")) {
+                    alert("LIFF IDが無効、またはチャネルの設定が正しくありません。LINEログインチャネルを確認してください。");
+                }
+            }
+        }
+
+        document.getElementById('entryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!GAS_URL || GAS_URL.includes("ここに")) {
+                alert("GASのURLが設定されていません。");
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'flex';
+
+            const formData = new FormData(e.target);
+            const qualifications = Array.from(document.querySelectorAll('input[name="qualifications"]:checked')).map(el => el.value);
+            
+            let profile = { displayName: "不明", userId: "不明" };
+            try {
+                if (liff.isLoggedIn()) {
+                    profile = await liff.getProfile();
+                }
+            } catch (pErr) {
+                console.warn("プロフィール取得失敗");
+            }
+
+            const payload = {
+                name: formData.get('name'),
+                qualifications: qualifications.join(', '),
+                type: formData.get('type'),
+                message: formData.get('message'),
+                lineName: profile.displayName,
+                userId: profile.userId
+            };
+
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+                await fetch(GAS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(payload),
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+
+                if (liff.isInClient()) {
+                    await liff.sendMessages([{
+                        type: 'text',
+                        text: 'エントリーを受け付けました！担当者からの連絡をお待ちください。'
+                    }]);
+                }
+
+                liff.closeWindow();
+
+            } catch (err) {
+                console.error("送信エラー", err);
+                alert("送信に失敗しました。GASのデプロイ設定（アクセスできるユーザー：全員）を確認してください。");
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+
+        initLiff();
+    </script>
+</body>
+</html>
